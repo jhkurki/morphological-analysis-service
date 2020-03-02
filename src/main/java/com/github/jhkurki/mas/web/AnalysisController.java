@@ -3,6 +3,7 @@ package com.github.jhkurki.mas.web;
 import com.github.jhkurki.mas.analyzer.Analyzer;
 import com.github.jhkurki.mas.domain.Analysis;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +32,13 @@ public class AnalysisController {
   @GetMapping("/lemma")
   public String lemma(
       @RequestParam(name = "word") String word,
+      @RequestParam(name = "tag", defaultValue = "#{T(java.util.Collections).emptySet()}") Set<String> tags,
       @RequestParam(name = "lang", defaultValue = "fi") String lang) {
-    return analysis(word, lang).findFirst().map(a -> a.lemma.replace("#", "")).orElse("");
+    return analysis(word, lang)
+        .filter(a -> tags.isEmpty() || a.tags.stream().anyMatch(tags::contains))
+        .findFirst()
+        .map(a -> a.lemma.replace('#', ' '))
+        .orElse("");
   }
 
 }
