@@ -37,7 +37,7 @@ public class AnalysisController {
     return analysis(word, lang)
         .filter(a -> tags.isEmpty() || a.tags.stream().anyMatch(tags::contains))
         .findFirst()
-        .map(a -> a.lemma.replace('#', ' '))
+        .map(a -> a.lemma)
         .orElse("");
   }
 
